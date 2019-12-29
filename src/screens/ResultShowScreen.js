@@ -3,25 +3,27 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   Image,
   TouchableOpacity,
   ScrollView
 } from "react-native";
 import yelp from "../api/yelp";
 
-import { YellowBox } from "react-native";
-YellowBox.ignoreWarnings([
-  "VirtualizedLists should never be nested" // TODO: Remove when fixed
-]);
-
 const ResultShowScreen = ({ navigation }) => {
   const [result, setResult] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
   const id = navigation.getParam("id");
 
   const getResult = async id => {
-    const response = await yelp.get(`/${id}`);
-    setResult(response.data);
+    try {
+      const response = await yelp.get(`/${id}`);
+      setResult(response.data);
+    } catch (err) {
+      setErrorMessage("Something went wrong");
+      setTimeout(function() {
+        setErrorMessage("");
+      }, 10000);
+    }
   };
 
   useEffect(() => {
@@ -29,12 +31,13 @@ const ResultShowScreen = ({ navigation }) => {
   }, []);
 
   if (!result) {
-    return null;
+    return <Text>{errorMessage}</Text>;
   }
 
   return (
     <ScrollView>
       <>
+        {errorMessage ? <Text>{errorMessage}</Text> : null}
         <Text style={styles.resultName}>{result.name}</Text>
         <Text style={styles.textStyle}>Country: {result.location.country}</Text>
         <Text style={styles.textStyle}>State: {result.location.state}</Text>
@@ -57,14 +60,9 @@ const ResultShowScreen = ({ navigation }) => {
           <Text style={styles.reviewBtn}>View Reviews</Text>
         </TouchableOpacity>
         <Text style={styles.galleryStyle}>Photo Gallery</Text>
-        <FlatList
-          data={result.photos}
-          keyExtractor={photo => photo}
-          renderItem={({ item }) => {
-            return <Image source={{ uri: item }} style={styles.image} />;
-          }}
-          style={{ paddingBottom: 20 }}
-        />
+        {result.photos.map((photo, index) => (
+          <Image source={{ uri: photo }} style={styles.image} key={index} />
+        ))}
       </>
     </ScrollView>
   );
