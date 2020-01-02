@@ -5,7 +5,8 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
 } from "react-native";
 import yelp from "../api/yelp";
 
@@ -30,8 +31,15 @@ const ResultShowScreen = ({ navigation }) => {
     getResult(id);
   }, []);
 
-  if (!result) {
+  if (!result && errorMessage) {
     return <Text>{errorMessage}</Text>;
+  }
+  if (!result) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="rgb(0, 105, 210)" />
+      </View>
+    );
   }
 
   return (

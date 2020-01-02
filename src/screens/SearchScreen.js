@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator
+} from "react-native";
 import SearchBar from "../components/SearchBar";
 import useResults from "../hooks/useResults";
 import ResultList from "../components/ResultList";
@@ -13,6 +19,14 @@ const SearchScreen = () => {
       return result.price === price;
     });
   };
+
+  if (!results) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="rgb(0, 105, 210)" />
+      </View>
+    );
+  }
 
   return (
     <>
