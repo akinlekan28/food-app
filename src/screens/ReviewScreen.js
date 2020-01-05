@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
+  ScrollView,
   ActivityIndicator
 } from "react-native";
 import yelp from "../api/yelp";
@@ -32,14 +32,12 @@ const ReviewScreen = ({ navigation }) => {
 
   return (
     <>
-      <Text style={styles.header}>Reviews</Text>
-      <FlatList
-        data={reviews}
-        keyExtractor={review => review.id}
-        renderItem={({ item }) => {
-          return <ReviewCard item={item} />;
-        }}
-      />
+      <ScrollView>
+        <Text style={styles.header}>Reviews</Text>
+        {reviews.map(review => (
+          <ReviewCard item={review} key={review.id} />
+        ))}
+      </ScrollView>
     </>
   );
 };
